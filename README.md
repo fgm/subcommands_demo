@@ -18,8 +18,8 @@ Checkout each branch in turn to learn one level at a time.
 
 1. simple subcommands
    1. basic usage with builtin commands
-   2. creating commands with the procedural API ← _you are here_
-   3. passing non-CLI arguments
+   2. creating commands with the procedural API
+   3. passing non-CLI arguments ← _you are here_
    4. command groups
    5. adding command flags
    6. marking flags as important
