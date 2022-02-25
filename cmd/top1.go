@@ -28,7 +28,9 @@ func (cmd *top1) Usage() string {
 
 func (cmd *top1) SetFlags(fs *flag.FlagSet) {}
 
-func (cmd *top1) Execute(context.Context, *flag.FlagSet, ...interface{}) subcommands.ExitStatus {
-	fmt.Printf("In %s\n", cmd.Name())
+func (cmd *top1) Execute(_ context.Context, _ *flag.FlagSet, args ...interface{}) subcommands.ExitStatus {
+	// The variadic arguments are the ones passed to subcommands.Execute().
+	// Unlike the CLI args, they are always a []interface{}.
+	fmt.Printf("In %s.\nNon-CLI args: %#v\n", cmd.Name(), args)
 	return subcommands.ExitSuccess
 }

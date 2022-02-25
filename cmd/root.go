@@ -21,5 +21,5 @@ func Execute(ctx context.Context) subcommands.ExitStatus {
 	}
 
 	flag.Parse()
-	return subcommands.Execute(ctx)
+	return subcommands.Execute(ctx, "meaning", 42)
 }

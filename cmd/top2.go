@@ -29,7 +29,8 @@ func (cmd *top2) Usage() string {
 func (cmd *top2) SetFlags(fs *flag.FlagSet) {}
 
 func (cmd *top2) Execute(_ context.Context, fs *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
-	// Notice how the command line arguments are taken on the flag set, not on the variadic.
-	fmt.Printf("In %s %v\n", cmd.Name(), fs.Args())
+	// The command line arguments are the ones taken from the flag set.
+	// Unlike the variadic args, they are always a []string.
+	fmt.Printf("In %s.\n    CLI args: %#v\n", cmd.Name(), fs.Args())
 	return subcommands.ExitSuccess
 }
