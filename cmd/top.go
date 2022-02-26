@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"flag"
+	"io"
 	"log"
 
 	"github.com/google/subcommands"
@@ -11,8 +12,12 @@ import (
 // top is the type for a reusable command implementing subcommands.Command:
 type top struct {
 	name, synopsis, usage string // Reuse support
-	prefix                string // Actual features
-	run                   func(context.Context, *top, *flag.FlagSet, ...interface{}) subcommands.ExitStatus
+
+	logger *log.Logger // Injected logger
+	outW   io.Writer   // Injected writers
+
+	prefix string // Actual features
+	run    func(context.Context, *top, *flag.FlagSet, ...any) subcommands.ExitStatus
 }
 
 func (cmd top) Name() string {
@@ -31,9 +36,10 @@ func (cmd *top) SetFlags(fs *flag.FlagSet) {
 	fs.StringVar(&cmd.prefix, "prefix", "", "Add a prefix to the result")
 }
 
-func (cmd *top) Execute(ctx context.Context, fs *flag.FlagSet, args ...interface{}) subcommands.ExitStatus {
+func (cmd *top) Execute(ctx context.Context, fs *flag.FlagSet, args ...any) subcommands.ExitStatus {
 	if cmd.run == nil {
-		log.Printf("command %s is not runnable", cmd.name)
+		// The logger was injected in Execute().
+		cmd.logger.Printf("command %s is not runnable", cmd.name)
 		return subcommands.ExitFailure
 	}
 	return cmd.run(ctx, cmd, fs, args)

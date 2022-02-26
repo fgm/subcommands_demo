@@ -4,26 +4,35 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io"
+	"log"
 	"strings"
 
 	"github.com/google/subcommands"
 )
 
-func top2Execute(ctx context.Context, cmd *top, fs *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+func top2Execute(ctx context.Context, cmd *top, fs *flag.FlagSet, _ ...any) subcommands.ExitStatus {
 	if ctx.Value(VerboseKey).(bool) {
-		fmt.Printf("In %s.\n", cmd.Name())
+		cmd.logger.Printf("In %s.\n", cmd.Name())
 	}
-	fmt.Println(strings.Join(append([]string{cmd.prefix}, fs.Args()...), ": "))
+
+	message := strings.Join(fs.Args(), " ")
+	if cmd.prefix != "" {
+		message = strings.Join(append([]string{cmd.prefix}, message), ": ")
+	}
+	fmt.Fprintln(cmd.outW, message)
 	return subcommands.ExitSuccess
 }
 
-func NewTop2() *top {
+func NewTop2(outW io.Writer, logger *log.Logger) *top {
 	const name = "top2"
 	return &top{
+		logger:   logger,
 		name:     name,
-		synopsis: fmt.Sprintf("%s is an exemple top-level custom command with arguments", name),
-		usage:    fmt.Sprintf("%s arg1 arg2 ...", name),
+		outW:     outW,
 		prefix:   "",
 		run:      top2Execute,
+		synopsis: fmt.Sprintf("%s is an exemple top-level custom command with arguments", name),
+		usage:    fmt.Sprintf("%s arg1 arg2 ...", name),
 	}
 }
