@@ -33,7 +33,7 @@ func (cmd *top1) SetFlags(fs *flag.FlagSet) {
 	fs.StringVar(&cmd.prefix, "prefix", "", "Add a prefix to the result")
 }
 
-func (cmd *top1) Execute(ctx context.Context, _ *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+func (cmd *top1) Execute(ctx context.Context, fs *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
 	if ctx.Value(VerboseKey).(bool) {
 		fmt.Printf("In %s.\n", cmd.Name())
 	}
