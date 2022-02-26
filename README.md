@@ -20,8 +20,8 @@ Checkout each branch in turn to learn one level at a time.
    1. basic usage with builtin commands
    2. creating commands with the procedural API
    3. passing non-CLI arguments
-   4. command groups ← _you are here_
-   5. adding command flags
+   4. command groups
+   5. adding command flags ← _you are here_
    6. marking flags as important
 2. reusing command code
 3. commanders

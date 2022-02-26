@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"strings"
 
 	"github.com/google/subcommands"
 )
@@ -11,8 +12,10 @@ import (
 // top1 is the type for a minimal command implementing subcommands.Command:
 //   - no data stored
 //   - no arguments
-//   - no flags
-type top1 struct{}
+//   - one flag
+type top1 struct {
+	prefix string
+}
 
 func (cmd *top1) Name() string {
 	return "top1"
@@ -26,11 +29,14 @@ func (cmd *top1) Usage() string {
 	return cmd.Name()
 }
 
-func (cmd *top1) SetFlags(fs *flag.FlagSet) {}
+func (cmd *top1) SetFlags(fs *flag.FlagSet) {
+	fs.StringVar(&cmd.prefix, "prefix", "", "Add a prefix to the result")
+}
 
-func (cmd *top1) Execute(_ context.Context, _ *flag.FlagSet, args ...interface{}) subcommands.ExitStatus {
-	// The variadic arguments are the ones passed to subcommands.Execute().
-	// Unlike the CLI args, they are always a []interface{}.
-	fmt.Printf("In %s.\nNon-CLI args: %#v\n", cmd.Name(), args)
+func (cmd *top1) Execute(ctx context.Context, _ *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	if ctx.Value(VerboseKey).(bool) {
+		fmt.Printf("In %s.\n", cmd.Name())
+	}
+	fmt.Println(strings.Join(append([]string{cmd.prefix}, "hello"), ": "))
 	return subcommands.ExitSuccess
 }
