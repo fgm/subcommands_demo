@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"flag"
+	"os"
 
 	"github.com/google/subcommands"
 )
@@ -19,7 +20,8 @@ var (
 
 // Execute sets up the command chain and runs it.
 func Execute(ctx context.Context) subcommands.ExitStatus {
-	commander := subcommands.DefaultCommander
+	// See subcommands.DefaultCommander
+	commander := subcommands.NewCommander(flag.CommandLine, os.Args[0])
 
 	for _, command := range [...]struct {
 		group string
