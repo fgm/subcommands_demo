@@ -3,17 +3,17 @@ all: run clean
 .PHONY: clean
 clean:
 	@echo "\nCleaning up"
-	rm -f demo
+	@rm -f demo
 
 .PHONY: lint
 lint:
 	@echo "\nLinting"
-	go vet ./...
-	staticcheck ./...
+	@go vet ./...
+	@staticcheck ./...
 
 demo: lint
 	@echo "\nBuilding"
-	go build -o demo .
+	@go build -o demo .
 
 .PHONY: run
 run: demo
@@ -26,7 +26,7 @@ run: demo
 #	@demo commands
 #	@echo "\n\"demo flags\": list available top-level flags (none)"
 #	@demo flags
-	@echo "\nRunning \"demo top1\":"
-	@demo top1
-	@echo "\nRunning \"demo top2 foo bar\":"
-	@demo top2 foo bar
+#	@echo "\nRunning \"demo top1\":"
+#	@demo top1
+#	@echo "\nRunning \"demo top2 foo bar\":"
+#	@demo top2 foo bar
