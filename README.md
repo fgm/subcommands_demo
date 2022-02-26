@@ -23,9 +23,9 @@ Checkout each branch in turn to learn one level at a time.
    4. command groups
    5. adding command flags
    6. marking flags as important
-2. reusing command code ← _you are here_
+2. reusing command code
 3. commanders
-   1. procedural vs object API
+   1. procedural vs object API ← _you are here_
    2. creating commands with custom commanders
    3. creating a testable command structure
 4. creating nested commands
