@@ -7,9 +7,15 @@ import (
 	"github.com/google/subcommands"
 )
 
-type verboseKey struct{}
+type (
+	debugKey   struct{}
+	verboseKey struct{}
+)
 
-var VerboseKey = verboseKey{}
+var (
+	DebugKey   = debugKey{}
+	VerboseKey = verboseKey{}
+)
 
 // Execute sets up the command chain and runs it.
 func Execute(ctx context.Context) subcommands.ExitStatus {
@@ -28,8 +34,11 @@ func Execute(ctx context.Context) subcommands.ExitStatus {
 		subcommands.Register(command.Command, command.group)
 	}
 
+	debug := flag.Bool("debug", false, "Show debug information")
 	verbose := flag.Bool("v", false, "Be more verbose")
+	subcommands.ImportantFlag("v")
 	flag.Parse()
+	ctx = context.WithValue(ctx, DebugKey, *debug)
 	ctx = context.WithValue(ctx, VerboseKey, *verbose)
 
 	return subcommands.Execute(ctx, "meaning")
