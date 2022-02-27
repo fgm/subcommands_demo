@@ -31,6 +31,7 @@ func Describe(outW io.Writer, logger *log.Logger) []description {
 		{"top", NewTop1(outW, logger)},                         // Our first top-level command, without args
 		{"top", NewTop2(outW, logger)},                         // Our second top-level command, with args
 		{"top", subcommands.Alias("1", NewTop1(outW, logger))}, // An alias for our top1 command
+		{"top", NewTop3(outW, logger)},                         // Our command with subcommands
 	}
 }
 
@@ -46,12 +47,13 @@ func Execute(ctx context.Context,
 	// Do not depend on log.Default().
 	logger := log.New(errW, "", logFlags)
 
-	// Create a flag.FlagSet from args to avoid depending on global os.Args.
-	// Continue on error to support testing instead of the ExitOnError on flag.CommandLine
 	if len(args) < 1 {
 		logger.Printf("Expected at least one argument for the program name, got none")
 		return subcommands.ExitFailure
 	}
+
+	// Create a flag.FlagSet from args to avoid depending on global os.Args.
+	// Continue on error to support testing instead of the ExitOnError on flag.CommandLine
 	fs := flag.NewFlagSet(args[0], flag.ContinueOnError)
 
 	// Create a custom commander to avoid depending on global flag.CommandLine and os.Args
@@ -75,7 +77,6 @@ func Execute(ctx context.Context,
 
 	// Parse must not receive the program name, hence the slice.
 	if err := fs.Parse(args[1:]); err != nil {
-		// Our logger has been configured above.
 		logger.Printf("Error parsing CLI flags: %v", err)
 		return subcommands.ExitUsageError
 	}
