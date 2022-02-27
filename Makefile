@@ -40,3 +40,11 @@ run: demo
 #	@demo 1       -prefix hello
 #	@echo "\nRunning \"demo -v top2\":"
 #	@demo -v top2 -prefix meaning life 42
+	@echo "\nRunning \"demo top3\":"
+	@demo top3
+	@echo "\nRunning \"demo top3 commands\":"
+	@demo top3 commands
+	@echo "\nRunning \"demo top3 sub31\":"
+	@demo top3 sub31
+	@echo "\nRunning \"demo top3 sub32\":"
+	@demo top3 sub32

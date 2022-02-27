@@ -27,8 +27,8 @@ Checkout each branch in turn to learn one level at a time.
 3. commanders
    1. procedural vs object API 
    2. creating commands with custom commanders 
-   3. creating a testable command structure ← _you are here_
-4. creating nested commands
+   3. creating a testable command structure
+4. creating nested commands ← _you are here_
 5. beyond `NewCommander`
    1. controlling output
    2. introspecting commanders
