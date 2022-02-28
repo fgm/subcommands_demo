@@ -12,7 +12,7 @@ import (
 )
 
 // sub31Execute is called when top3 is invoked without arguments.
-func sub31Execute(ctx context.Context, cmd *top, fs *flag.FlagSet, _ ...any) subcommands.ExitStatus {
+func sub31Execute(ctx context.Context, cmd *top, _ *flag.FlagSet, _ ...any) subcommands.ExitStatus {
 	if ctx.Value(VerboseKey).(bool) {
 		cmd.logger.Printf("In %s.\n", cmd.Name())
 	}
@@ -20,7 +20,7 @@ func sub31Execute(ctx context.Context, cmd *top, fs *flag.FlagSet, _ ...any) sub
 	if cmd.prefix != "" {
 		message = strings.Join(append([]string{cmd.prefix}, message), ": ")
 	}
-	fmt.Fprintln(cmd.outW, message)
+	_, _ = fmt.Fprintln(cmd.outW, message)
 	return subcommands.ExitSuccess
 }
 

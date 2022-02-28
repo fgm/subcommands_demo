@@ -15,7 +15,9 @@ lint:
 .PHONY: test
 test:
 	@echo "\nTesting"
-	@go test -race -cover ./cmd
+	@go test -race -v -cover ./cmd
+#	@echo "Commander problem: stdErr output during tests"
+#	go test -v -count=1 ./cmd/... -run="Test_Execute/(top1,_undeclared_global_flag,_no_args|no_actual_args)"
 
 demo: lint test
 	@echo "\nBuilding"
@@ -40,11 +42,11 @@ run: demo
 #	@demo 1       -prefix hello
 #	@echo "\nRunning \"demo -v top2\":"
 #	@demo -v top2 -prefix meaning life 42
-	@echo "\nRunning \"demo top3\":"
-	@demo top3
-	@echo "\nRunning \"demo top3 commands\":"
-	@demo top3 commands
-	@echo "\nRunning \"demo top3 sub31\":"
-	@demo top3 sub31
-	@echo "\nRunning \"demo top3 sub32\":"
-	@demo top3 sub32
+#	@echo "\nRunning \"demo top3\":"
+#	@demo top3
+#	@echo "\nRunning \"demo top3 commands\":"
+#	@demo top3 commands
+#	@echo "\nRunning \"demo top3 sub31\":"
+#	@demo top3 sub31
+#	@echo "\nRunning \"demo top3 sub32\":"
+#	@demo top3 sub32

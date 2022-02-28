@@ -55,9 +55,12 @@ func Execute(ctx context.Context,
 	// Create a flag.FlagSet from args to avoid depending on global os.Args.
 	// Continue on error to support testing instead of the ExitOnError on flag.CommandLine
 	fs := flag.NewFlagSet(args[0], flag.ContinueOnError)
+	fs.SetOutput(errW)
 
 	// Create a custom commander to avoid depending on global flag.CommandLine and os.Args
 	commander := subcommands.NewCommander(fs, args[0])
+	commander.Output = outW
+	commander.Error = errW
 
 	descriptions := []description{
 		{"help", commander.CommandsCommand()}, // Implement "commands"
