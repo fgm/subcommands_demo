@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/google/subcommands"
 )
 
@@ -39,8 +40,12 @@ func TestTop_Properties(t *testing.T) {
 
 func TestTop_SetFlags(t *testing.T) {
 	const (
-		testName = "TestTop_SetFlags"
-		cmdName  = "a"
+		testName   = "TestTop_SetFlags"
+		cmdName    = "a"
+		usage      = "c"
+		BadFlagErr = `c  -prefix string
+    	Add a prefix to the result
+`
 	)
 	// This test verifies top.SetFlags, not top.Execute.
 	runner := func(_ context.Context, cmd *top, _ *flag.FlagSet, _ ...any) subcommands.ExitStatus {
@@ -53,7 +58,7 @@ func TestTop_SetFlags(t *testing.T) {
 		expect
 	}{
 		{"no flags", []string{testName, cmdName}, expect{subcommands.ExitSuccess, "", ""}},
-		{"bad flag", []string{testName, cmdName, "-bad"}, expect{subcommands.ExitUsageError, "", ""}},
+		{"bad flag", []string{testName, cmdName, "-bad"}, expect{subcommands.ExitUsageError, BadFlagErr, ""}},
 		{"good flag", []string{testName, cmdName, "-prefix", "good"}, expect{subcommands.ExitSuccess, "", "good"}},
 	}
 
@@ -65,8 +70,18 @@ func TestTop_SetFlags(t *testing.T) {
 			errW := &strings.Builder{}
 			logger := log.New(errW, "", 0)
 			fs := flag.NewFlagSet(testName, flag.ContinueOnError)
-			cmd := top{name: cmdName, synopsis: "b", usage: "c", outW: outW, logger: logger, run: runner}
+			fs.SetOutput(errW)
+			cmd := top{
+				name:     cmdName,
+				synopsis: "b",
+				usage:    usage,
+				outW:     outW,
+				logger:   logger,
+				run:      runner,
+			}
 			commander := subcommands.NewCommander(fs, check.args[0])
+			commander.Output = outW
+			commander.Error = errW
 			commander.Register(&cmd, "")
 
 			if err := fs.Parse(check.args[1:]); err != nil {
@@ -76,7 +91,7 @@ func TestTop_SetFlags(t *testing.T) {
 				t.Fatalf("Expected %d, got %d", check.expectedSts, actualSts)
 			}
 			if actualErr := errW.String(); actualErr != check.expectedErr {
-				t.Fatalf("Expected err:\n%sActual err:\n%s", check.expectedErr, actualErr)
+				t.Fatalf(cmp.Diff(check.expectedErr, actualErr))
 			}
 			if actualOut := outW.String(); actualOut != check.expectedOut {
 				t.Fatalf("Expected out:\n%sActual out:\n%s", check.expectedOut, actualOut)
@@ -106,7 +121,6 @@ func TestTop_Execute(t *testing.T) {
 		{"top1 without args", []string{testName, "top1"}, NewTop1, expect{subcommands.ExitSuccess, "", "hello\n"}},
 		{"top1 with args", []string{testName, "top1", "bad"}, NewTop1, expect{subcommands.ExitFailure, "top1 expects no arguments, called with 1: [bad]\n", ""}},
 	}
-
 	for _, check := range checks {
 		check := check
 		t.Run(check.name, func(t *testing.T) {
@@ -116,6 +130,7 @@ func TestTop_Execute(t *testing.T) {
 			logger := log.New(errW, "", 0)
 			cmd := check.cmdFactory(outW, logger)
 			fs := flag.NewFlagSet(cmd.Name(), flag.PanicOnError)
+			fs.SetOutput(errW)
 			fs.Parse(check.args[2:])
 
 			ctx := context.WithValue(context.Background(), VerboseKey, false)
@@ -142,30 +157,29 @@ type topCheck struct {
 }
 
 func baseTopNTest(t *testing.T, check topCheck, factory func(writer io.Writer, logger *log.Logger) *top) {
-	t.Run(check.name, func(t *testing.T) {
-		t.Parallel()
-		outW := &strings.Builder{}
-		errW := &strings.Builder{}
-		logger := log.New(errW, "", 0)
-		cmd := factory(outW, logger)
-		ctx := context.WithValue(context.Background(), VerboseKey, check.verbose)
+	outW := &strings.Builder{}
+	errW := &strings.Builder{}
+	logger := log.New(errW, "", 0)
+	cmd := factory(outW, logger)
+	ctx := context.WithValue(context.Background(), VerboseKey, check.verbose)
 
-		fs := flag.NewFlagSet(cmd.Name(), flag.PanicOnError)
-		cmd.SetFlags(fs) // Normally performed by commander.Execute()
-		args := check.args
-		if check.prefix != "" {
-			args = append([]string{"-prefix", check.prefix}, args...)
-		}
-		fs.Parse(args)
+	fs := flag.NewFlagSet(cmd.Name(), flag.ContinueOnError)
+	fs.SetOutput(errW)
+	cmd.SetFlags(fs) // Normally performed by commander.Execute()
+	args := check.args
+	if check.prefix != "" {
+		args = append([]string{"-prefix", check.prefix}, args...)
+	}
+	// For this test, we need to ignore invalid flags so they can be caught in command.
+	fs.Parse(args)
 
-		if actualSts := cmd.Execute(ctx, fs, nil); actualSts != check.expectedSts {
-			t.Fatalf("Expected %d, got %d", check.expectedSts, actualSts)
-		}
-		if actualErr := errW.String(); actualErr != check.expectedErr {
-			t.Fatalf("Expected err:\n%sActual err:\n%s", check.expectedErr, actualErr)
-		}
-		if actualOut := outW.String(); actualOut != check.expectedOut {
-			t.Fatalf("Expected out:\n%sActual out:\n%s", check.expectedOut, actualOut)
-		}
-	})
+	if actualSts := cmd.Execute(ctx, fs, nil); actualSts != check.expectedSts {
+		t.Fatalf("Expected %d, got %d", check.expectedSts, actualSts)
+	}
+	if actualErr := errW.String(); actualErr != check.expectedErr {
+		t.Fatalf(cmp.Diff(check.expectedErr, actualErr))
+	}
+	if actualOut := outW.String(); actualOut != check.expectedOut {
+		t.Fatalf(cmp.Diff(check.expectedOut, actualOut))
+	}
 }

@@ -12,7 +12,7 @@ import (
 )
 
 // sub32Execute is called when top3 is invoked without arguments.
-func sub32Execute(ctx context.Context, cmd *top, fs *flag.FlagSet, _ ...any) subcommands.ExitStatus {
+func sub32Execute(ctx context.Context, cmd *top, _ *flag.FlagSet, _ ...any) subcommands.ExitStatus {
 	if ctx.Value(VerboseKey).(bool) {
 		cmd.logger.Printf("In %s.\n", cmd.Name())
 	}

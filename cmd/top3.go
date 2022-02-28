@@ -11,12 +11,12 @@ import (
 	"github.com/google/subcommands"
 )
 
-func top3Internal(ctx context.Context, cmd *top, fs *flag.FlagSet, _ ...any) subcommands.ExitStatus {
+func top3Internal(_ context.Context, cmd *top, _ *flag.FlagSet, _ ...any) subcommands.ExitStatus {
 	message := "hello top3"
 	if cmd.prefix != "" {
 		message = strings.Join(append([]string{cmd.prefix}, message), ": ")
 	}
-	fmt.Fprintln(cmd.outW, message)
+	_, _ = fmt.Fprintln(cmd.outW, message)
 	return subcommands.ExitSuccess
 }
 
@@ -33,9 +33,12 @@ func top3Execute(ctx context.Context, cmd *top, topFS *flag.FlagSet, args ...any
 	// Create a flag.FlagSet from args to use only remaining args
 	// Continue on error to support testing.
 	fs := flag.NewFlagSet(cmd.Name(), flag.ContinueOnError)
+	fs.SetOutput(cmd.logger.Writer())
 
 	// Create a custom commander to restart evaluation below this command.
 	commander := subcommands.NewCommander(fs, name)
+	commander.Output = cmd.outW
+	commander.Error = cmd.logger.Writer()
 
 	descriptions := []description{
 		{name, commander.CommandsCommand()}, // Implement "commands"
@@ -48,11 +51,8 @@ func top3Execute(ctx context.Context, cmd *top, topFS *flag.FlagSet, args ...any
 		commander.Register(command.command, command.group)
 	}
 
-	// Parse must not receive the command name.
-	if err := fs.Parse(topFS.Args()); err != nil {
-		cmd.logger.Printf("Error parsing %s flags: %v", name, err)
-		return subcommands.ExitUsageError
-	}
+	// At this point, flags have been consumed, so fs.Parse() cannot fail.
+	_ = fs.Parse(topFS.Args())
 
 	return commander.Execute(ctx, fs)
 }
