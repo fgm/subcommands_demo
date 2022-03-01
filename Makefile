@@ -48,5 +48,7 @@ run: demo
 #	@demo top3 sub31
 #	@echo "\nRunning \"demo top3 sub32\":"
 #	@demo top3 sub32
-	@echo "\nRunning \"demo visit\":"
-	@demo -v visit
+#	@echo "\nRunning \"demo visit\":"
+#	@demo -v visit
+	@echo "\nRunning \"demo explain\":"
+	@demo explain
