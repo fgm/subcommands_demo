@@ -37,6 +37,7 @@ Subcommands for top:
 	top1, 1          top1 is an exemple top-level custom command without arguments
 	top2             top2 is an exemple top-level custom command with arguments
 	top3             top3 is an exemple top-level custom command with nested subcommands
+	visit            demoes commander Visit* functions
 
 
 Top-level flags (use "Test_Execute flags" for a full list):

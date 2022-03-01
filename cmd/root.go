@@ -24,6 +24,10 @@ type description struct {
 	command subcommands.Command
 }
 
+type CommanderAware interface {
+	SetCommander(commander *subcommands.Commander)
+}
+
 // Describe provides the list of non-builtin command descriptions,
 // so that Execute can receive different sets of commands during tests.
 func Describe(outW io.Writer, logger *log.Logger) []description {
@@ -32,6 +36,7 @@ func Describe(outW io.Writer, logger *log.Logger) []description {
 		{"top", NewTop2(outW, logger)},                         // Our second top-level command, with args
 		{"top", subcommands.Alias("1", NewTop1(outW, logger))}, // An alias for our top1 command
 		{"top", NewTop3(outW, logger)},                         // Our command with subcommands
+		{"top", NewVisit(outW, logger)},                        // Our command demonstrating commander Visit*
 	}
 }
 
@@ -71,6 +76,9 @@ func Execute(ctx context.Context,
 		descriptions = append(descriptions, describe(outW, logger)...)
 	}
 	for _, command := range descriptions {
+		if vc, ok := command.command.(CommanderAware); ok {
+			vc.SetCommander(commander)
+		}
 		commander.Register(command.command, command.group)
 	}
 
