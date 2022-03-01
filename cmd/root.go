@@ -37,6 +37,7 @@ func Describe(outW io.Writer, logger *log.Logger) []description {
 		{"top", subcommands.Alias("1", NewTop1(outW, logger))}, // An alias for our top1 command
 		{"top", NewTop3(outW, logger)},                         // Our command with subcommands
 		{"top", NewVisit(outW, logger)},                        // Our command demonstrating commander Visit*
+		{"top", NewExplain(outW, logger)},                      // Our command demonstrating commander Explain*
 	}
 }
 

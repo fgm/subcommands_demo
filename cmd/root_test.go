@@ -34,6 +34,7 @@ Subcommands for help:
 	help             describe subcommands and their syntax
 
 Subcommands for top:
+	explain          demoes commander Explain* function fields
 	top1, 1          top1 is an exemple top-level custom command without arguments
 	top2             top2 is an exemple top-level custom command with arguments
 	top3             top3 is an exemple top-level custom command with nested subcommands

@@ -31,5 +31,5 @@ Checkout each branch in turn to learn one level at a time.
 4. creating nested commands
 5. beyond `NewCommander`
    1. controlling output
-   2. introspecting commanders ← _you are here_
-   3. replacing builtins
+   2. introspecting commanders
+   3. replacing builtins ← _you are here_
