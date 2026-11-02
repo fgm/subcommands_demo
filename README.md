@@ -30,6 +30,6 @@ Checkout each branch in turn to learn one level at a time.
    3. creating a testable command structure
 4. creating nested commands
 5. beyond `NewCommander`
-   1. controlling output ← _you are here_
-   2. introspecting commanders
+   1. controlling output
+   2. introspecting commanders ← _you are here_
    3. replacing builtins
